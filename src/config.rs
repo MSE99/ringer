@@ -1,6 +1,7 @@
-use std::{collections::HashMap, time::Duration};
+use std::time::Duration;
 
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 
 #[derive(Serialize, Deserialize)]
 pub struct RingerConfig {
@@ -21,7 +22,7 @@ pub struct Application {
 pub enum Alerter {
     HttpAlerter {
         url: String,
-        payload: HashMap<String, String>,
+        payload: Value,
         authorization: Option<String>,
     },
 }
