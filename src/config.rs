@@ -1,13 +1,6 @@
-use io::Result;
-use std::{
-    fs::{self, File},
-    io,
-    path::PathBuf,
-    time::Duration,
-};
-
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use std::time::Duration;
 
 #[derive(Serialize, Deserialize)]
 pub struct RingerConfig {
