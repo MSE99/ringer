@@ -1,20 +1,16 @@
 mod config;
 
-use std::sync::mpsc;
+use warp::Filter;
 
-fn main() {
-    let (sender, receiver) = mpsc::channel();
+#[tokio::main]
+async fn main() {
+    let routes = warp::any().map(|| "foo");
 
-    ctrlc::set_handler(move || {
-        match sender.send(true) {
-            Ok(_) => (),
-            Err(e) => println!("{}", e.to_string()),
-        };
-        ()
-    })
-    .expect("could not set interrupt signal handler");
+    let (_addr, server_fut) =
+        warp::serve(routes).bind_with_graceful_shutdown(([127, 0, 0, 1], 3000), async move {
+            tokio::signal::ctrl_c().await.unwrap();
+            println!("gotten shutdown signal");
+        });
 
-    receiver.recv().unwrap();
-
-    println!("{}", "Shutting down");
+    tokio::task::spawn(server_fut).await.unwrap();
 }
