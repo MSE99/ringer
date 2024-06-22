@@ -1,6 +1,22 @@
 use warp::{reject::Rejection, Filter, Reply};
 
-pub fn create_warp_server() -> impl Filter<Extract = impl Reply, Error = Rejection> + Clone {
+use crate::config::RingerConfig;
+
+pub async fn run_http_server(config: &RingerConfig) {
+    let router = create_warp_server();
+
+    let (_addr, server_fut) = warp::serve(router).bind_with_graceful_shutdown(
+        ([127, 0, 0, 1], config.http_server_port),
+        async move {
+            tokio::signal::ctrl_c().await.unwrap();
+            println!("gotten shutdown signal");
+        },
+    );
+
+    tokio::task::spawn(server_fut).await.unwrap();
+}
+
+fn create_warp_server() -> impl Filter<Extract = impl Reply, Error = Rejection> + Clone {
     warp::get().and(warp::path("status")).map(|| "OK")
 }
 
