@@ -10,13 +10,13 @@ pub struct RingerConfig {
     pub apps: Vec<Application>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Application {
-    name: String,
-    status_url: String,
-    interval: Duration,
-    cool_down: Option<Duration>,
+    pub name: String,
+    pub status_url: String,
+    pub interval: u64,
+    pub cool_down: Option<Duration>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -102,7 +102,7 @@ mod tests {
         let app: Application = Application {
             name: String::from("hello world"),
             cool_down: None,
-            interval: Duration::from_secs(10),
+            interval: 10,
             status_url: String::from("https://salem.com"),
         };
 
