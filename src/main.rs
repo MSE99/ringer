@@ -1,13 +1,12 @@
 mod config;
-
-use warp::Filter;
+mod http;
 
 #[tokio::main]
 async fn main() {
-    let routes = warp::any().map(|| "foo");
+    let router = http::create_warp_server();
 
     let (_addr, server_fut) =
-        warp::serve(routes).bind_with_graceful_shutdown(([127, 0, 0, 1], 3000), async move {
+        warp::serve(router).bind_with_graceful_shutdown(([127, 0, 0, 1], 3000), async move {
             tokio::signal::ctrl_c().await.unwrap();
             println!("gotten shutdown signal");
         });
