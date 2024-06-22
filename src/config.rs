@@ -4,8 +4,10 @@ use serde_json::Value;
 use std::{fs::File, path::PathBuf, time::Duration};
 
 #[derive(Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct RingerConfig {
-    apps: Vec<Application>,
+    pub http_server_port: u16,
+    pub apps: Vec<Application>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -32,6 +34,13 @@ pub fn load_config_from(p: &PathBuf) -> Result<RingerConfig> {
     let config: RingerConfig = serde_json::from_reader(reader)?;
 
     Ok(config)
+}
+
+pub fn default_config() -> RingerConfig {
+    RingerConfig {
+        apps: vec![],
+        http_server_port: 3000,
+    }
 }
 
 #[cfg(test)]
@@ -98,7 +107,10 @@ mod tests {
         };
 
         let apps: Vec<Application> = vec![app];
-        let config = RingerConfig { apps };
+        let config = RingerConfig {
+            apps,
+            http_server_port: 3000,
+        };
         let serialized = serde_json::to_string(&config).unwrap();
         temp.add_content(&serialized).unwrap();
 
@@ -110,5 +122,13 @@ mod tests {
             config_from_file.apps.iter().nth(0).unwrap().name,
             String::from("hello world")
         );
+    }
+
+    #[test]
+    fn default_config_test() {
+        let gotten = default_config();
+        let expected = 3000;
+
+        assert_eq!(gotten.http_server_port, expected);
     }
 }
