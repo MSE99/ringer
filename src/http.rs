@@ -13,6 +13,11 @@ pub async fn run_http_server(config: &RingerConfig) {
         },
     );
 
+    println!(
+        "started http server, listening on PORT {}",
+        config.http_server_port
+    );
+
     tokio::task::spawn(server_fut).await.unwrap();
 }
 

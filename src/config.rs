@@ -17,9 +17,10 @@ pub struct Application {
     pub status_url: String,
     pub interval: u64,
     pub cool_down: Option<Duration>,
+    pub alerters: Vec<Alerter>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub enum Alerter {
     HttpAlerter {
@@ -104,6 +105,7 @@ mod tests {
             cool_down: None,
             interval: 10,
             status_url: String::from("https://salem.com"),
+            alerters: vec![],
         };
 
         let apps: Vec<Application> = vec![app];
