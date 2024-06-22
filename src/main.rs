@@ -20,3 +20,14 @@ fn get_config_path_at_cwd() -> PathBuf {
     current_path.push(Path::new("config.json"));
     current_path
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn should_return_config_path() {
+        let result = get_config_path_at_cwd();
+        assert!(result.ends_with("config.json"));
+    }
+}
