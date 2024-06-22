@@ -1,6 +1,6 @@
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
+use serde_json::{json, Value};
 use std::{fs::File, path::PathBuf, time::Duration};
 
 #[derive(Serialize, Deserialize)]
@@ -22,12 +22,10 @@ pub struct Application {
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
-pub enum Alerter {
-    HttpAlerter {
-        url: String,
-        payload: Value,
-        authorization: Option<String>,
-    },
+pub struct Alerter {
+    pub url: String,
+    pub payload: Value,
+    pub authorization: Option<String>,
 }
 
 pub fn load_config_from(p: &PathBuf) -> Result<RingerConfig> {
@@ -39,7 +37,17 @@ pub fn load_config_from(p: &PathBuf) -> Result<RingerConfig> {
 
 pub fn default_config() -> RingerConfig {
     RingerConfig {
-        apps: vec![],
+        apps: vec![Application {
+            alerters: vec![Alerter {
+                url: String::from("https://sms.devs.ly/"),
+                payload: json!({ "foo": "bar" }),
+                authorization: None,
+            }],
+            cool_down: None,
+            interval: 3000,
+            name: String::from("FMA"),
+            status_url: String::from("https://fma.aramtech.ly/server/api/status"),
+        }],
         http_server_port: 3000,
     }
 }
